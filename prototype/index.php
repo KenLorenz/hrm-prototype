@@ -1,90 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php
+
+
+
+
+?>
+
+
 <head>
     <?php include('includes-regform/headassets.php') ?>
-
-    <title>Repair/Fix Request</title> <!-- this table is for requests -->
+    <title>Repair/Upgrade Request</title> <!-- this php contains table view -->
 </head>
 
 <body>
     <div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
         <div class="wrapper wrapper--w790">
             <div class="card card-5">
+                
                 <div class="card-heading">
-                    <h2 class="title">Event Registration Form</h2>
+                    <h2 class="title">Repair & Upgrade Request Form</h2>
                 </div>
+
                 <div class="card-body">
                     <form method="POST">
 
-                        <div class="form-row m-b-55">
-                            <div class="name">Name</div>
-                            <div class="value">
-                                <div class="row row-space">
-                                    <div class="col-2">
-                                        <div class="input-group-desc">
-                                            <input class="input--style-5" type="text" name="first_name">
-                                            <label class="label--desc">first name</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-2">
-                                        <div class="input-group-desc">
-                                            <input class="input--style-5" type="text" name="last_name">
-                                            <label class="label--desc">last name</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="form-row">
-                            <div class="name">Company</div>
+                            <div class="name">Email:</div> <!-- This will be used for acquiring the department as well as employee involved -->
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="text" name="company">
+                                    <input class="input--style-5" type="text" name="company" required>
+                                    <label class="label--desc">Enter your company email</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="name">Email</div>
+                        <div class="form-row"> <!-- Max will depend on Department table floor column (new column) -->
+                            <div class="name">Department Floor:</div>
                             <div class="value">
                                 <div class="input-group">
-                                    <input class="input--style-5" type="email" name="email">
+                                    <input type="Number" class="input--style-5" type="text" name="company" min="1" max="10"  required>
+                                    <label class="label--desc">Enter your assigned department floor</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-row m-b-55">
-                            <div class="name">Phone</div>
-                            <div class="value">
-                                <div class="row row-refine">
-                                    <div class="col-3">
-                                        <div class="input-group-desc">
-                                            <input class="input--style-5" type="text" name="area_code">
-                                            <label class="label--desc">Area Code</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="input-group-desc">
-                                            <input class="input--style-5" type="text" name="phone">
-                                            <label class="label--desc">Phone Number</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="name">Subject</div>
+                        <div class="form-row"> <!-- This option assumes that a company has a table specifically for devices that uses. -->
+                            <div class="name">Device: </div>
                             <div class="value">
                                 <div class="input-group">
                                     <div class="rs-select2 js-select-simple select--no-search">
-                                        <select name="subject">
-                                            <option disabled="disabled" selected="selected">Choose option</option>
-                                            <option>Subject 1</option>
-                                            <option>Subject 2</option>
-                                            <option>Subject 3</option>
+                                        <select name="subject" required>
+                                            <option>OptiPlex 7050</option> <!-- PC -->
+                                            <option>imageFORMULA DR-C225 II</option> <!-- Scanner -->
+                                            <option>PowerLite 1781W</option> <!-- Projector -->
                                         </select>
                                         <div class="select-dropdown"></div>
                                     </div>
@@ -92,17 +62,29 @@
                             </div>
                         </div>
 
+                        <div class="form-row">
+                            <div class="name">Feedback</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    <input class="input--style-5" type="email" name="email" required>
+                                    <label type="Text" class="label--desc">Enter your detailed feedback</label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-row p-t-20">
-                            <label class="label label--block">Are you an existing customer?</label>
+                            <label class="label label--block">Request Type:</label>
                             <div class="p-t-15">
-                                <label class="radio-container m-r-55">Yes
+                                <label class="radio-container m-r-55">Repair
                                     <input type="radio" checked="checked" name="exist">
                                     <span class="checkmark"></span>
                                 </label>
-                                <label class="radio-container">No
+
+                                <label class="radio-container">Upgrade
                                     <input type="radio" name="exist">
                                     <span class="checkmark"></span>
                                 </label>
+
                             </div>
                         </div>
                         
