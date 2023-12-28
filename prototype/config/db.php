@@ -1,26 +1,14 @@
 <?php
-class Database {
-    private $host = 'localhost';
-    private $username = 'ren';
-    private $password = '122846';
-    private $database = 'hrm_project';
-    private $conn;
 
-    public function __construct() {
-        try {
-            $dsn = "mysql:host={$this->host};dbname={$this->database}";
-            $this->conn = new PDO($dsn, $this->username, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
-        }
-    }
+define('ROOT_URL','http://localhost/prototype/');
+define('DB_HOST', 'localhost');
+define('DB_USER', 'ren');
+define('DB_PASS', '122846');
+define('DB_NAME', 'hrm_functional');
+define('DB_PORT', '3306');
 
+$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
 
-    public function getConnection() {
-        return $this->conn;
-    }
+if(mysqli_connect_errno()){
+    echo 'Failed to connect to MySQL'.mysqli_connect_errno();
 }
-
-
-?>
