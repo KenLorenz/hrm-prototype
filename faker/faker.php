@@ -63,7 +63,7 @@ function faker_maintenance($conn,$faker): void {
 
         $idmaintenance_type = $faker->numberBetween($min = 1, $max = 2);
 
-        $date_issued = $faker->dateTimeBetween($startDate = '-3 years', $endDate = '-1 years', $timezone = null);
+        $date_issued = $faker->dateTimeBetween($startDate = '-5 years', $endDate = '-1 years', $timezone = null);
 
         if ($idmaintenance_status == 1){
             $date_status_change = null;
