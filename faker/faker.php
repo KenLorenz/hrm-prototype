@@ -8,7 +8,7 @@ $faker = Faker\Factory::create('en_PH');
 
 $conn = mysqli_connect("localhost", "ren", "122846", "hrm_functional", 3306);
 
-function faker_employees_unitassignments_has_repairs($conn,$faker,$idmaintenance): void {
+function faker_employees_unitassignments_has_repairs($conn,$faker,$idmaintenance,$idmaintenance_status): void {
     
     $sql = "SELECT * FROM employees_unitassignments;";
     $query_result = mysqli_query($conn,$sql);
@@ -19,11 +19,15 @@ function faker_employees_unitassignments_has_repairs($conn,$faker,$idmaintenance
     $iddepartments = $rows[$random_row]['departments_iddepartments'];
     $idemployees_issued = $rows[$random_row]['employees_idemployees'];    
 
-    $sql = "SELECT employees_idemployees FROM service_records WHERE job_positions_idjob_positions in (1214,27,8,19,10262023,202180249);";
-    $query_result = mysqli_query($conn,$sql);
-    $rows = mysqli_fetch_all($query_result,MYSQLI_ASSOC);
-
-    $idemployees_repairer = $rows[$faker->numberBetween($min=0,$max=(count($rows)-1))]['employees_idemployees'];
+    if ($idmaintenance_status != 1){
+        $sql = "SELECT employees_idemployees FROM service_records WHERE job_positions_idjob_positions in (1214,27,8,19,10262023,202180249);";
+        $query_result = mysqli_query($conn,$sql);
+        $rows = mysqli_fetch_all($query_result,MYSQLI_ASSOC);
+        $idemployees_repairer = $rows[$faker->numberBetween($min=0,$max=(count($rows)-1))]['employees_idemployees'];
+    } else {
+        $idemployees_repairer = 'null';
+    }
+    
     $department_floor = $faker->numberBetween($min=1,$max=6);
 
     $sql = "INSERT INTO employees_unitassignments_has_repairs(`idmaintenance`,`iddepartments`,`idemployees_issued`,`idemployees_repairer`,`department_floor`) 
@@ -67,15 +71,12 @@ function faker_maintenance($conn,$faker): void {
             $date_status_change = $faker->dateTime($max = $date_issued, $timezone = null);
             $date_status_change = $date_status_change->format('Y-m-d H:i:s');           
         }
-
-
-        
         
         $date_issued = $date_issued->format('Y-m-d H:i:s');
 
         $issued_feedback = $faker->text();
 
-        if ($idmaintenance_status == 1){
+        if ($idmaintenance_status == 1 || $idmaintenance_status == 2){
             $repairer_response = '';
         } else {
             $repairer_response = $faker->text();
@@ -104,7 +105,7 @@ function faker_maintenance($conn,$faker): void {
         # sync other tables
         faker_devices_has_maintenance($conn,$device,$idmaintenance);
 
-        faker_employees_unitassignments_has_repairs($conn,$faker,$idmaintenance);
+        faker_employees_unitassignments_has_repairs($conn,$faker,$idmaintenance,$idmaintenance_status);
     }
 }
 
