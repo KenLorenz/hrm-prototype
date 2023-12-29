@@ -117,26 +117,43 @@ function faker_access($conn,$faker): void { # only gives access to people with r
     $query_result = mysqli_query($conn,$sql);
 
     $rows = mysqli_fetch_all($query_result,MYSQLI_ASSOC);
-    for($i = 0; $i < mysqli_num_rows($query_result); $i++){
 
-        $employees_idemployees = $rows[$i]['employees_idemployees'];
+    $sql = "SELECT idemployees FROM employees";
+    $query_result2 = mysqli_query($conn,$sql);
+
+    $rows_all = mysqli_fetch_all($query_result2,MYSQLI_ASSOC);
+
+    for($i = 0; $i < mysqli_num_rows($query_result2); $i++){
+
+        $employees_idemployees = $rows_all[$i]['idemployees'];
         $company_email = $faker->email();
-        $password = $faker->password(); # password has illegal cases
+        $password = $faker->password();
+        
 
+        $website_privilege = null;
+        foreach($rows as $x){
+            if($rows_all[$i]['idemployees'] == $x['employees_idemployees']){
+                $website_privilege = 2;
+            }
+        }
 
-        $sql = "INSERT INTO access(`employees_idemployees`, `company_email`, `password`)
-        VALUES($employees_idemployees, '".$company_email."', '".$password."')";
+        if($website_privilege == null){
+            $website_privilege = 1;
+        }
+        
+        $sql = "INSERT INTO access(`employees_idemployees`, `company_email`, `password`,`website_privilege`)
+        VALUES($employees_idemployees, '".$company_email."', '".$password."',$website_privilege)";
 
         try{
             mysqli_query($conn,$sql);
         } catch (Exception $e){
             # echo $e;
-            $i--;
+            # $i--;
         }
     }
 }
 
-faker_maintenance($conn,$faker);
+# faker_maintenance($conn,$faker);
 
 faker_access($conn,$faker); # doesn't work once access table contains something
 
