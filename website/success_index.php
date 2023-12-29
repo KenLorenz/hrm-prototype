@@ -14,8 +14,6 @@
                 <div class="card-heading">
                     <h2 class="title">Repair & Upgrade Request Form</h2>
                 </div>
-                
-
 
                 <div class="card-body">
                     <div class="form-row-custom">
