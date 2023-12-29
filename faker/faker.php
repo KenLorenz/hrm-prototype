@@ -82,7 +82,10 @@ function faker_maintenance($conn,$faker): void {
             $repairer_response = $faker->text();
         }
 
-        $device = $faker->numberBetween($min = 1, $max = 15);
+        $sql = "select * from devices;";
+        $device_total = mysqli_query($conn,$sql);
+
+        $device = $faker->numberBetween($min = 1, $max = mysqli_num_rows($device_total));
 
         if($date_status_change == null){ # lazy way to ignore $date_status_change
             $sql = "INSERT INTO maintenance(`idmaintenance_status`,`idmaintenance_type`,`date_issued`,`issued_feedback`,`repairer_response`,`device`) 
@@ -109,6 +112,32 @@ function faker_maintenance($conn,$faker): void {
     }
 }
 
+function faker_access($conn,$faker): void { # only gives access to people with related job positions (all of them)
+    $sql = "SELECT employees_idemployees FROM service_records WHERE job_positions_idjob_positions in (1214,27,8,19,10262023,202180249);";
+    $query_result = mysqli_query($conn,$sql);
+
+    $rows = mysqli_fetch_all($query_result,MYSQLI_ASSOC);
+    for($i = 0; $i < mysqli_num_rows($query_result); $i++){
+
+        $employees_idemployees = $rows[$i]['employees_idemployees'];
+        $company_email = $faker->email();
+        $password = $faker->password(); # password has illegal cases
+
+
+        $sql = "INSERT INTO access(`employees_idemployees`, `company_email`, `password`)
+        VALUES($employees_idemployees, '".$company_email."', '".$password."')";
+
+        try{
+            mysqli_query($conn,$sql);
+        } catch (Exception $e){
+            # echo $e;
+            $i--;
+        }
+    }
+}
 
 faker_maintenance($conn,$faker);
+
+faker_access($conn,$faker); # doesn't work once access table contains something
+
 mysqli_close($conn);
