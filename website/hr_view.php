@@ -3,15 +3,18 @@
 
 
 <?php
-    
+# default panel page.
 
-require('config/db.php');
+session_start();
 
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION = [];
+    header("Location: login_admin.php");
+    exit;
+}
 
+include('config/db.php');
 
-
-
-# This table should only include Finished requests.
 ?>
 
 <head>

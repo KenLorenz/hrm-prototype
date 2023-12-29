@@ -153,8 +153,8 @@ function faker_access($conn,$faker): void { # only gives access to people with r
     }
 }
 
-# faker_maintenance($conn,$faker);
+faker_maintenance($conn,$faker);
 
-faker_access($conn,$faker); # doesn't work once access table contains something
+# faker_access($conn,$faker); # doesn't work once access table contains something
 
 mysqli_close($conn);

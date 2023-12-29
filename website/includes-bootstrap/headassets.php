@@ -16,4 +16,6 @@
 <link href="bootstrap/assets/css/light-bootstrap-dashboard.css?v=2.0.0 " rel="stylesheet" />
 
 <!-- CSS Just for demo purpose, don't include it in your project -->
-<link href="bootstrap/assets/css/demo.css" rel="stylesheet" />
+<!-- <link href="bootstrap/assets/css/demo.css" rel="stylesheet" /> -->
+
+<script src="./chart.js"></script>

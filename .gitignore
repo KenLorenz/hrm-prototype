@@ -1,5 +1,6 @@
 misc
 theme
 *.zip
-
+.gitignore
 prototype/faker
+note

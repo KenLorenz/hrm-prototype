@@ -5,7 +5,6 @@
 include_once('config/db.php');
 
 
-
 if(isset($_POST['submit'])){ # placeholder
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -18,13 +17,14 @@ if(isset($_POST['submit'])){ # placeholder
     }else{
         echo 'ERROR: '.mysqli_error($conn);
     }
-
-    if(mysqli_num_rows($result) > 0){
-        $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    if(mysqli_num_rows($result) > 0 && $row[0]['website_privilege'] == 2){
         
-        header("Location: hr_view.php");
-
-        define('ADMIN_ID',$row[0]['employees_idemployees']);
+        # header("Location: hr_view.php?admin_id=". $row[0]['employees_idemployees']);
+        session_start();
+        $_SESSION['user_id'] = $row[0]['employees_idemployees'];
+        
+        header("Location: hr_view.php?admin_id=".$_SESSION['user_id']);
     } /* else {
         header("Location: login_admin.php");
     } */
