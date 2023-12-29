@@ -4,12 +4,15 @@
 
 <?php
     
-/* require('config/config.php');
-require('config/db.php'); */
-    
-# its HR analysis for approved specifically, separatedly for fix and upgrade, and both.
-?>
 
+require('config/db.php');
+
+
+
+
+
+# This table should only include Finished requests.
+?>
 
 <head>
     <?php include('includes-bootstrap/headassets.php') ?>
@@ -42,41 +45,141 @@ require('config/db.php'); */
 
 
                                 <div class="card-header ">
-                                    <h4 class="card-title">Feedback & Requests History</h4>
-                                    <p class="card-category">Repair & Upgrade Request Logs</p>
+                                    <h4 class="card-title">Feedback & Requests Analytics</h4> <!-- only includes approved requests -->
+                                    <p class="card-category">Annual frequency chart (Approved Requests)</p>
                                 </div>
-                                <div class="card-body table-full-width table-responsive">
-                                    <table class="table table-hover table-striped">
-                                        <thead>
-                                            <th>Issued by</th>
-                                            <th>Device</th>
-                                            <th>Request Type</th>
-                                            <th>Department</th>
-                                            <th>Floor</th> <!-- Department Floor -->
-                                            <th>Date</th>
-                                            <th>Status</th>
-                                        </thead>
-                                        <tbody> <!-- if no ongoing requests, it should echo a description -->
-                                            <tr> 
-                                                <td>Ken Lorenz</td>
-                                                <td>imageFORMULA DR-C225 II</td>
-                                                <td>Repair</td>
-                                                <td>Phoenix Graphics Inc.</td>
-                                                <td>1</td>
-                                                <td>25 Dec 2023</td>
-                                                <td>Completed</td>
-                                                <td><a href="manage.php?id="><button>Manage</button></a></td> <!-- pressing a specific row opens a new page for a more detailed and organized form. -->
-                                            </tr>
-                                            
-                                        </tbody>
-                                    </table>
+                                
+                                <div class="card-body ">
+                                    <h4 class="card-title" style="text-align: center;">Total Repair Request Chart</h4>
+                                    <canvas id="repair-frequency"></canvas>
+
+                                    <h4 class="card-title" style="text-align: center;">Total Upgrade Request Chart</h4>
+                                    <canvas id="upgrade-frequency"></canvas>
+                                    <?php
+                                        $sql = "SELECT DATE_FORMAT(date_issued, '%Y') as year, count(idmaintenance_type) as total_type # year, total_type, # for first chart
+                                        FROM maintenance WHERE idmaintenance_type = 2 and idmaintenance_status = 3
+                                        GROUP BY DATE_FORMAT(date_issued, '%Y') ORDER BY year asc;";
+                                
+                                        $result = mysqli_query($conn,$sql);
+                                        
+                                        
+                                        if(mysqli_num_rows($result) > 0){
+                                            $year = array();
+                                            $total_type = array();
+                                            while($row = mysqli_fetch_array($result)){
+                                                $year[] = $row['year'];
+                                                $total_type[] = $row['total_type'];
+                                            }
+                                        } else {
+                                            echo "No records found.";
+                                        }
+
+                                        # 
+                                        $sql2 = "SELECT DATE_FORMAT(date_issued, '%Y') as year, count(idmaintenance_type) as total_type # year, total_type, # for first chart
+                                        FROM maintenance WHERE idmaintenance_type = 1 and idmaintenance_status = 3
+                                        GROUP BY DATE_FORMAT(date_issued, '%Y') ORDER BY year asc;";
+                                
+                                        $result2 = mysqli_query($conn,$sql2);
+                                        
+                                        
+                                        if(mysqli_num_rows($result2) > 0){ # fix later
+                                            $year2 = array();
+                                            $total_type2 = array();
+                                            while($row = mysqli_fetch_array($result2)){
+                                                $year2[] = $row['year'];
+                                                $total_type2[] = $row['total_type'];
+                                            }
+                                        } else {
+                                            echo "No records found.";
+                                        }
+                                        
+                                        mysqli_free_result($result);
+                                        mysqli_free_result($result2);
+
+                                        mysqli_close($conn);
+                                    ?>
+
+                                    
+
+                                    <script>
+                                        
+                                        // Repair chart
+
+                                        const year2 = <?php echo json_encode($year2); ?>;
+                                        const total_type2 = <?php echo json_encode($total_type2); ?>;
+
+                                        const data2 = {
+                                            labels: year2,
+                                            datasets: [{
+                                                label: 'Total Repair Request Per Year',
+                                                data: total_type2,
+                                                backgroundColor: [
+                                                    'rgb(100,99,255)',
+                                                ]
+                                            }
+                                            ]
+                                        };
+                                        
+                                        const config2 = {
+                                            type: 'line',
+                                            data: data2,
+                                            options: {
+                                                indexAxis: 'x',
+                                            }
+                                        };
+
+                                        const upgradeFrequency = new Chart(
+                                            document.getElementById('repair-frequency'),
+                                            config2
+                                        );
+
+                                        // Upgrade chart
+
+                                        const year = <?php echo json_encode($year); ?>;
+                                        const total_type = <?php echo json_encode($total_type); ?>;
+
+                                        const data1 = {
+                                            labels: year,
+                                            datasets: [{
+                                                label: 'Total Upgrade Request Per Year',
+                                                data: total_type,
+                                                backgroundColor: [
+                                                    'rgb(100,255,132)',
+                                                ]
+                                            }
+                                            ]
+                                        };
+                                        
+
+                                        
+
+                                        const config1 = {
+                                            type: 'line',
+                                            data: data1,
+                                            options: {
+                                                indexAxis: 'x',
+                                                plugin: {
+                                                    legend: {
+                                                        display: false,
+                                                    }
+                                                }
+                                            },
+                                        };
+
+                                        const repairFrequency = new Chart(
+                                            document.getElementById('upgrade-frequency'),
+                                            config1
+                                        );
+
+                                    </script>
                                 </div>
                             </div>
                         </div>
-                        <?php
-                        for($page = 1; $page <= $number_of_page; $page++){
-                            echo '<a href="employee.php?page=1'. $page . '">' . $page . '</a>'; /* note */
-                        }?>
+
+
+
+
+
                     </div>
                 </div>
             </div>
