@@ -45,15 +45,15 @@ require('config/db.php');
 
 
                                 <div class="card-header ">
-                                    <h4 class="card-title">Feedback & Requests Analytics</h4> <!-- only includes approved requests -->
-                                    <p class="card-category">Annual frequency chart (Approved Requests)</p>
+                                    <h4 class="card-title">Feedback/Requests Analytics</h4> <!-- only includes approved requests -->
+                                    <p class="card-category">Annual Requests frequency chart</p>
                                 </div>
                                 
                                 <div class="card-body ">
-                                    <h4 class="card-title" style="text-align: center;">Total Repair Request Chart</h4>
+                                    <h4 class="card-title" style="text-align: center;">Total Repair Request Completed Chart</h4>
                                     <canvas id="repair-frequency"></canvas>
 
-                                    <h4 class="card-title" style="text-align: center;">Total Upgrade Request Chart</h4>
+                                    <h4 class="card-title" style="text-align: center;">Total Upgrade Request Completed Chart</h4>
                                     <canvas id="upgrade-frequency"></canvas>
                                     <?php
                                         $sql = "SELECT DATE_FORMAT(date_issued, '%Y') as year, count(idmaintenance_type) as total_type # year, total_type, # for first chart
@@ -74,7 +74,6 @@ require('config/db.php');
                                             echo "No records found.";
                                         }
 
-                                        # 
                                         $sql2 = "SELECT DATE_FORMAT(date_issued, '%Y') as year, count(idmaintenance_type) as total_type # year, total_type, # for first chart
                                         FROM maintenance WHERE idmaintenance_type = 1 and idmaintenance_status = 3
                                         GROUP BY DATE_FORMAT(date_issued, '%Y') ORDER BY year asc;";
@@ -82,7 +81,7 @@ require('config/db.php');
                                         $result2 = mysqli_query($conn,$sql2);
                                         
                                         
-                                        if(mysqli_num_rows($result2) > 0){ # fix later
+                                        if(mysqli_num_rows($result2) > 0){
                                             $year2 = array();
                                             $total_type2 = array();
                                             while($row = mysqli_fetch_array($result2)){
@@ -96,10 +95,7 @@ require('config/db.php');
                                         mysqli_free_result($result);
                                         mysqli_free_result($result2);
 
-                                        mysqli_close($conn);
                                     ?>
-
-                                    
 
                                     <script>
                                         
@@ -111,7 +107,7 @@ require('config/db.php');
                                         const data2 = {
                                             labels: year2,
                                             datasets: [{
-                                                label: 'Total Repair Request Per Year',
+                                                label: 'Total Repair Completed Request Per Year',
                                                 data: total_type2,
                                                 backgroundColor: [
                                                     'rgb(100,99,255)',
@@ -128,7 +124,7 @@ require('config/db.php');
                                             }
                                         };
 
-                                        const upgradeFrequency = new Chart(
+                                        const repairFrequency = new Chart(
                                             document.getElementById('repair-frequency'),
                                             config2
                                         );
@@ -141,7 +137,7 @@ require('config/db.php');
                                         const data1 = {
                                             labels: year,
                                             datasets: [{
-                                                label: 'Total Upgrade Request Per Year',
+                                                label: 'Total Upgrade Completed Request Per Year',
                                                 data: total_type,
                                                 backgroundColor: [
                                                     'rgb(100,255,132)',
@@ -149,9 +145,6 @@ require('config/db.php');
                                             }
                                             ]
                                         };
-                                        
-
-                                        
 
                                         const config1 = {
                                             type: 'line',
@@ -166,9 +159,126 @@ require('config/db.php');
                                             },
                                         };
 
-                                        const repairFrequency = new Chart(
+                                        const upgradeFrequency = new Chart(
                                             document.getElementById('upgrade-frequency'),
                                             config1
+                                        );
+
+                                    </script>
+                                    
+                                    <h4 class="card-title" style="text-align: center;">Total Repair Request Denial Chart</h4>
+                                    <canvas id="repair-frequency-denied"></canvas>
+
+                                    <h4 class="card-title" style="text-align: center;">Total Upgrade Request Denial Chart</h4>
+                                    <canvas id="upgrade-frequency-denied"></canvas>
+
+                                    <?php
+                                        $sql = "SELECT DATE_FORMAT(date_issued, '%Y') as year, count(idmaintenance_type) as total_type # year, total_type, # for first chart
+                                        FROM maintenance WHERE idmaintenance_type = 2 and idmaintenance_status = 4
+                                        GROUP BY DATE_FORMAT(date_issued, '%Y') ORDER BY year asc;";
+                                
+                                        $result = mysqli_query($conn,$sql);
+                                          
+                                        if(mysqli_num_rows($result) > 0){
+                                            $year = array();
+                                            $total_type = array();
+                                            while($row = mysqli_fetch_array($result)){
+                                                $year[] = $row['year'];
+                                                $total_type[] = $row['total_type'];
+                                            }
+                                        } else {
+                                            echo "No records found.";
+                                        }
+
+                                        $sql2 = "SELECT DATE_FORMAT(date_issued, '%Y') as year, count(idmaintenance_type) as total_type # year, total_type, # for first chart
+                                        FROM maintenance WHERE idmaintenance_type = 1 and idmaintenance_status = 4
+                                        GROUP BY DATE_FORMAT(date_issued, '%Y') ORDER BY year asc;";
+                                
+                                        $result2 = mysqli_query($conn,$sql2);
+                                        
+                                        
+                                        if(mysqli_num_rows($result2) > 0){
+                                            $year2 = array();
+                                            $total_type2 = array();
+                                            while($row = mysqli_fetch_array($result2)){
+                                                $year2[] = $row['year'];
+                                                $total_type2[] = $row['total_type'];
+                                            }
+                                        } else {
+                                            echo "No records found.";
+                                        }
+                                        
+                                        mysqli_free_result($result);
+                                        mysqli_free_result($result2);
+
+                                        mysqli_close($conn);
+                                    ?>
+
+                                    <script>
+                                        
+                                        // Repair chart denied
+
+                                        const year3 = <?php echo json_encode($year2); ?>;
+                                        const total_type3 = <?php echo json_encode($total_type2); ?>;
+
+                                        const data3 = {
+                                            labels: year3,
+                                            datasets: [{
+                                                label: 'Total Repair Denied Request Per Year',
+                                                data: total_type3,
+                                                backgroundColor: [
+                                                    'rgb(255,99,255)',
+                                                ]
+                                            }
+                                            ]
+                                        };
+                                        
+                                        const config3 = {
+                                            type: 'line',
+                                            data: data3,
+                                            options: {
+                                                indexAxis: 'x',
+                                            }
+                                        };
+
+                                        const repairFrequencyDenied = new Chart(
+                                            document.getElementById('repair-frequency-denied'),
+                                            config3
+                                        );
+
+                                        // Upgrade chart denied
+
+                                        const year4 = <?php echo json_encode($year); ?>;
+                                        const total_type4 = <?php echo json_encode($total_type); ?>;
+
+                                        const data4 = {
+                                            labels: year4,
+                                            datasets: [{
+                                                label: 'Total Upgrade Denied Request Per Year',
+                                                data: total_type4,
+                                                backgroundColor: [
+                                                    'rgb(100,255,255)',
+                                                ]
+                                            }
+                                            ]
+                                        };
+
+                                        const config4 = {
+                                            type: 'line',
+                                            data: data4,
+                                            options: {
+                                                indexAxis: 'x',
+                                                plugin: {
+                                                    legend: {
+                                                        display: false,
+                                                    }
+                                                }
+                                            },
+                                        };
+
+                                        const upgradeFrequencyDenied = new Chart(
+                                            document.getElementById('upgrade-frequency-denied'),
+                                            config4
                                         );
 
                                     </script>
