@@ -57,13 +57,13 @@ function faker_devices_has_maintenance($conn,$device,$idmaintenance): void {
 }
 
 function faker_maintenance($conn,$faker): void {
-    for($i = 1; $i <= 70; $i++){
+    for($i = 1; $i <= 500; $i++){
 
         $idmaintenance_status = $faker->numberBetween($min = 1, $max = 4);
 
         $idmaintenance_type = $faker->numberBetween($min = 1, $max = 2);
 
-        $date_issued = $faker->dateTimeBetween($startDate = '-5 years', $endDate = '-1 years', $timezone = null);
+        $date_issued = $faker->dateTimeBetween($startDate = '-11 years', $endDate = '-1 years', $timezone = null);
 
         if ($idmaintenance_status == 1){
             $date_status_change = null;
